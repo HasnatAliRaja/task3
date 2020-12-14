@@ -32,7 +32,7 @@ class Search extends Component {
 const Card = (props) => {
   return <div className="bookCard"><img src={props.image} />
   <span>{props.title}</span>
-  <h6>{props.authors[0]}</h6>
+  <h6>{props.authors?props.authors[0]:" "}</h6>
   </div>;
 };
 
