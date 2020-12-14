@@ -37,27 +37,41 @@ class Detail extends Component {
   render() {
     console.warn("Render Called");
     return (
-      <div>
-        {(this.state.book !== undefined &&
-        this.state.book.volumeInfo !== undefined) ? (
-          <div>
-            {this.state.book.volumeInfo !== undefined ? (
-              <h1>{this.state.book.volumeInfo.title}</h1>
-            ) : (
-              ""
-            )}
+      <div className="detailsContainer">
+        {this.state.book !== undefined &&
+        this.state.book.volumeInfo !== undefined ? (
+          <div className="contentMain">
             <img
+              className="bookImage"
               src={
-                this.state.book.volumeInfo !== undefined && this.state.book.volumeInfo.imageLinks !== undefined
+                this.state.book.volumeInfo !== undefined &&
+                this.state.book.volumeInfo.imageLinks !== undefined
                   ? this.state.book.volumeInfo.imageLinks.small
-                  : ""
+                  : "The Image could not be loaded"
               }
             ></img>
-            <p className="description">
-              {this.state.book.volumeInfo !== undefined
-                ? this.state.book.volumeInfo.description
-                : ""}
-            </p>
+            <div>
+              {this.state.book.volumeInfo !== undefined ? (
+                <h2 className="bookName">{this.state.book.volumeInfo.title}</h2>
+              ) : (
+                ""
+              )}
+              {this.state.book.volumeInfo.authors!==undefined&&(<p className="authors">
+                {this.state.book.volumeInfo.authors.map((author) => (
+                  <p>{author}</p>
+                ))}
+              </p>)}
+              <hr className="divider"></hr>
+              <div
+                className="description"
+                dangerouslySetInnerHTML={{
+                  __html:
+                    this.state.book.volumeInfo !== undefined
+                      ? this.state.book.volumeInfo.description
+                      : "",
+                }}
+              />
+            </div>
           </div>
         ) : (
           ""

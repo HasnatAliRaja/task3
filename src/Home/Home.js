@@ -26,11 +26,13 @@ class Home extends Component {
       },
       this.fetchBooks
     );
-    if (e.target.value == "") {
-      this.setState((state) => ({
-        ...state,
+    if (e.target.value === "") {
+      this.setState({
         open: false,
-      }));
+        books:[],
+        input:''
+      },console.log('Aria',this.state));
+      
     }
   };
 
@@ -49,15 +51,14 @@ class Home extends Component {
           this.state.startIndex + 10
         );
         this.setState((state) => ({
-          ...state,
           books: [...state.books, ...response.items],
         }));
       })
       .catch();
-    this.setState((state) => ({
-      ...state,
-      startIndex: state.startIndex + 10,
-    }));
+    this.setState({
+      
+      startIndex: this.state.startIndex + 10,
+    });
   };
 
   fetchBooks = () => {
@@ -67,13 +68,14 @@ class Home extends Component {
       ).then((response) => {
         if (response.status === 200) {
           response.json().then((response) => {
-            this.setState((state) => ({ ...state, books: response.items }));
+            this.setState({ books: response.items });
           });
         } else alert("Status !== 200");
       });
     }
   };
   setSearchBar = (e) => {};
+  
 
   render() {
     return (
@@ -92,17 +94,17 @@ class Home extends Component {
               // onBlur={() => setOpen(false)}
               onChange={this.handleChange}
             ></input>
-            <button className="searchButton">Search</button>
+            <Link to={`/search/${this.state.input.replace(/\s/g,'+')}`} className='searchLink'><button key={this.state.input} disabled={this.state.input.length>=3?false:true} className="searchButton">Search</button></Link>
           </div>
 
           {this.state.open && this.state.books !== undefined && (
             <div className="suggestionsBoxContainer">
               <div className="suggestionsBox">
-                {(this.state.books == undefined &&
-                  this.state.books.length == 0) && (
+                {(this.state.books === undefined &&
+                  this.state.books.length === 0) && (
                   <div className="suggestion">Not Found</div>
                 )}
-                {this.state.books != undefined &&
+                {this.state.books !== undefined &&
                   this.state.books.map((book) => (
                     <div
                       className="suggestion"
@@ -128,7 +130,7 @@ class Home extends Component {
                       )}
                     </div>
                   ))}
-                <button className="loadMoreButton" onClick={this.onLoadClick}>Load More</button>
+                {this.state.startIndex<=40&&(<button className="loadMoreButton" onClick={this.onLoadClick}>Load More</button>)}
               </div>
             </div>
           )}
