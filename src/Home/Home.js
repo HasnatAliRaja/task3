@@ -11,15 +11,17 @@ class Home extends Component {
       open: false,
       startIndex: 10,
     };
-
-    //bindinds
-    this.handleChange = this.handleChange.bind(this);
   }
 
-  viewDetails = (e) => {
-    console.log(e.value);
-  };
+  
   handleChange = (e) => {
+
+    console.log("handle Change called!",this);
+    if(e.keyCode=== 13 ){
+      console.log("you pressed enter!!!")
+      this.btn.click();
+      return false;
+    }
     this.setState(
       {
         input: e.target.value,
@@ -29,11 +31,11 @@ class Home extends Component {
     if (e.target.value === "") {
       this.setState({
         open: false,
-        books:[],
-        input:''
-      },console.log('Aria',this.state));
-      
+        books: [],
+        input: "",
+      });
     }
+    
   };
 
   onLoadClick = () => {
@@ -56,7 +58,6 @@ class Home extends Component {
       })
       .catch();
     this.setState({
-      
       startIndex: this.state.startIndex + 10,
     });
   };
@@ -75,37 +76,48 @@ class Home extends Component {
     }
   };
   setSearchBar = (e) => {};
-  
 
   render() {
+    console.log("RenderCalled")
+    let {input,books,startIndex,open} = this.state;
     return (
       <div>
         <div className="searchBoxContainer">
           <div className="searchBoxDiv">
             <input
               className="searchField"
-              value={this.state.input}
+              value={input}
               placeholder="Enter Book Name...."
-              onInput={() =>
-                this.setState({
-                  open: true,
-                })
-              }
-              // onBlur={() => setOpen(false)}
+              
+              onInput={()=>this.setState({open:true})}
+              // onBlur={() => this.setState({Open:false})}
+              //Destructuring !
               onChange={this.handleChange}
             ></input>
-            <Link to={`/search/${this.state.input.replace(/\s/g,'+')}`} className='searchLink'><button key={this.state.input} disabled={this.state.input.length>=3?false:true} className="searchButton">Search</button></Link>
+            <Link
+              to={`/search/${input.replace(/\s/g, "+")}`}
+              className="searchLink"
+            >
+              <button
+                key={input}
+                disabled={(open&&input.length<=1)? true : false}
+                ref={node => (this.btn = node)}
+                className="searchButton"
+              >
+                Search
+              </button>
+            </Link>
           </div>
 
-          {this.state.open && this.state.books !== undefined && (
+          {open && books !== undefined && (
             <div className="suggestionsBoxContainer">
               <div className="suggestionsBox">
-                {(this.state.books === undefined &&
-                  this.state.books.length === 0) && (
-                  <div className="suggestion">Not Found</div>
-                )}
-                {this.state.books !== undefined &&
-                  this.state.books.map((book) => (
+                {books === undefined &&
+                  books.length === 0 && (
+                    <div className="suggestion">Not Found</div>
+                  )}
+                {books !== undefined &&
+                  books.map((book) => (
                     <div
                       className="suggestion"
                       key={book.id}
@@ -121,7 +133,12 @@ class Home extends Component {
                       book.volumeInfo.title !== undefined ? (
                         <Link
                           className="routerLinks"
-                          to={`/details/${book.id}`}
+                          to={{
+                            pathname: `/details/${book.id}`,
+                            state: {
+                              book: book,
+                            },
+                          }}
                         >
                           {book.volumeInfo.title}
                         </Link>
@@ -130,7 +147,11 @@ class Home extends Component {
                       )}
                     </div>
                   ))}
-                {this.state.startIndex<=40&&(<button className="loadMoreButton" onClick={this.onLoadClick}>Load More</button>)}
+                {startIndex <= 40 && books!="" && (
+                  <button className="loadMoreButton" onClick={this.onLoadClick}>
+                    Load More
+                  </button>
+                )}
               </div>
             </div>
           )}

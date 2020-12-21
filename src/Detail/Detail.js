@@ -2,72 +2,52 @@ import React, { Component } from "react";
 import "./Detail.css";
 
 class Detail extends Component {
-  constructor({ match }) {
+  constructor(props) {
     super();
-    this.state = {
-      book: {},
-      id: match.params.id,
-    };
-    console.warn("Constructor Called", match.params.id);
-    this.fetchItem(match);
+    
   }
-  fetchItem = async (match) => {
-    console.warn("Fetch Called", match);
-    let id = match.params.id;
-    console.log("(D", id);
-    await fetch(`https://www.googleapis.com/books/v1/volumes/` + id).then(
-      (response) => {
-        response.json().then((neoResponse) => {
-          console.log(neoResponse, "Hello");
 
-          this.setState({
-            book: neoResponse,
-          });
-          console.log("Hello", this.state.book);
-          return neoResponse;
-        });
-      }
-    );
-  };
-  componentDidMount() {
-    console.warn("Did mount Called");
-    console.log("Details Component Did Mount Hurray", this.state.book);
-  }
+ 
 
   render() {
+    let {
+      location: {
+        state: { book },
+      },
+    } = this.props;
+    console.log("this is inside render",book)
     console.warn("Render Called");
     return (
       <div className="detailsContainer">
-        {this.state.book !== undefined &&
-        this.state.book.volumeInfo !== undefined ? (
+        {book !== undefined && book.volumeInfo !== undefined ? (
           <div className="contentMain">
             <img
               className="bookImage"
               src={
-                this.state.book.volumeInfo !== undefined &&
-                this.state.book.volumeInfo.imageLinks !== undefined
-                  ? this.state.book.volumeInfo.imageLinks.small
-                  : "The Image could not be loaded"
+               
+                book.volumeInfo.imageLinks !== undefined
+                  ? book.volumeInfo.imageLinks.thumbnail
+                  : "https://www.google.com/imgres?imgurl=https%3A%2F%2Fwww.colourbox.com%2Fpreview%2F10761451-no-possible.jpg&imgrefurl=https%3A%2F%2Fwww.colourbox.com%2Fvector%2Fno-possible-vector-10761451&tbnid=_97loBD9tna99M&vet=12ahUKEwjpiPiwut3tAhUTPhoKHdvDCx4QMygDegQIARBt..i&docid=8yyvQNFvUZ7dnM&w=800&h=541&q=no%20image%20possible&client=firefox-b-d&ved=2ahUKEwjpiPiwut3tAhUTPhoKHdvDCx4QMygDegQIARBt"
               }
             ></img>
             <div>
-              {this.state.book.volumeInfo !== undefined ? (
-                <h2 className="bookName">{this.state.book.volumeInfo.title}</h2>
-              ) : (
-                ""
+              
+                <h2 className="bookName">{book.volumeInfo.title}</h2>
+              
+              {book.volumeInfo.authors !== undefined && (
+                <p className="authors">
+                  {book.volumeInfo.authors.map((author) => (
+                    <p>{author}</p>
+                  ))}
+                </p>
               )}
-              {this.state.book.volumeInfo.authors!==undefined&&(<p className="authors">
-                {this.state.book.volumeInfo.authors.map((author) => (
-                  <p>{author}</p>
-                ))}
-              </p>)}
               <hr className="divider"></hr>
               <div
                 className="description"
                 dangerouslySetInnerHTML={{
                   __html:
-                    this.state.book.volumeInfo !== undefined
-                      ? this.state.book.volumeInfo.description
+                    book.volumeInfo !== undefined
+                      ? book.volumeInfo.description
                       : "",
                 }}
               />
